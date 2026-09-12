@@ -43,7 +43,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 3. Built-in ASP.NET Core Rate Limiter: 10 comparisons / day per InstallId or IP fallback
+// 3. Built-in ASP.NET Core Rate Limiter: 25 comparisons / day per InstallId or IP fallback
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -72,7 +72,7 @@ builder.Services.AddRateLimiter(options =>
                 $"install_{installId}",
                 _ => new FixedWindowRateLimiterOptions
                 {
-                    PermitLimit = 15,
+                    PermitLimit = 25,
                     Window = TimeSpan.FromDays(1),
                     QueueLimit = 0
                 });
@@ -84,7 +84,7 @@ builder.Services.AddRateLimiter(options =>
             $"ip_{clientIp}",
             _ => new FixedWindowRateLimiterOptions
             {
-                PermitLimit = 15,
+                PermitLimit = 25,
                 Window = TimeSpan.FromDays(1),
                 QueueLimit = 0
             });

@@ -36,8 +36,8 @@ public class RateLimitingIntegrationTests : IClassFixture<WebApplicationFactory<
 
         HttpResponseMessage? lastResponse = null;
 
-        // Exhaust the 15-permit limit
-        for (int i = 0; i < 16; i++)
+        // Exhaust the 25-permit limit
+        for (int i = 0; i < 26; i++)
         {
             lastResponse = await client.PostAsJsonAsync("/api/v1/compare", payload);
             if (lastResponse.StatusCode == HttpStatusCode.TooManyRequests)

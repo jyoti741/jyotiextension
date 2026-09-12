@@ -87,6 +87,14 @@ public class GroqProvider : IAIProvider
         if (!response.IsSuccessStatusCode)
         {
             _logger.LogWarning("Groq API returned HTTP {StatusCode} after {Duration}ms", (int)response.StatusCode, stopwatch.ElapsedMilliseconds);
+
+            // Attempt to rescue failed_generation if Groq's validator rejected a minor syntax typo
+            if (TryRecoverFailedGeneration(responseContent, request.Pages, out var recoveredResponse))
+            {
+                _logger.LogInformation("Successfully recovered and sanitized valid comparison from Groq failed_generation.");
+                return recoveredResponse!;
+            }
+
             throw new HttpRequestException($"Groq API downstream failure ({response.StatusCode}): {responseContent}");
         }
 
@@ -123,6 +131,52 @@ public class GroqProvider : IAIProvider
     {
         var sources = pages.Select(p => new SourceAttribution(p.Id, p.Url, p.Domain)).ToList();
         return response with { Sources = sources };
+    }
+
+    private static bool TryRecoverFailedGeneration(string responseContent, List<PageSnapshot> pages, out CompareResponse? recovered)
+    {
+        recovered = null;
+        try
+        {
+            using var doc = JsonDocument.Parse(responseContent);
+            if (doc.RootElement.TryGetProperty("error", out var errorEl) &&
+                errorEl.TryGetProperty("failed_generation", out var failedGenEl))
+            {
+                var failedJson = failedGenEl.GetString();
+                if (!string.IsNullOrWhiteSpace(failedJson))
+                {
+                    // Repair common key quote syntax errors, e.g. \"winnerItemIds:[] -> \"winnerItemIds\":[]
+                    failedJson = System.Text.RegularExpressions.Regex.Replace(failedJson, @"(?<![""\w])([a-zA-Z0-9_]+):", "\"$1\":");
+                    failedJson = System.Text.RegularExpressions.Regex.Replace(failedJson, @"\\""([a-zA-Z0-9_]+):", "\"$1\":");
+
+                    int openBraces = failedJson.Count(c => c == '{') - failedJson.Count(c => c == '}');
+                    int openBrackets = failedJson.Count(c => c == '[') - failedJson.Count(c => c == ']');
+                    if (openBraces > 0 || openBrackets > 0)
+                    {
+                        var sb = new StringBuilder(failedJson);
+                        for (int i = 0; i < openBrackets; i++) sb.Append(']');
+                        for (int i = 0; i < openBraces; i++) sb.Append('}');
+                        failedJson = sb.ToString();
+                    }
+
+                    var parsed = JsonSerializer.Deserialize<CompareResponse>(failedJson, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    if (parsed != null && parsed.Items != null && parsed.Criteria != null)
+                    {
+                        recovered = EnsureSources(parsed, pages);
+                        return true;
+                    }
+                }
+            }
+        }
+        catch
+        {
+            // Ignore recovery errors and fall through
+        }
+        return false;
     }
 
     private static string BuildSystemPrompt()
