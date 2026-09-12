@@ -1,6 +1,6 @@
 import { CompareRequest, CompareResponse, ApiErrorResponse, PageSnapshot } from "../types/comparison";
 
-const DEFAULT_API_BASE_URL = "http://localhost:5100";
+const DEFAULT_API_BASE_URL = "https://compare-anything-api.onrender.com";
 
 /**
  * Retrieves the persistent installId from chrome.storage.local.
