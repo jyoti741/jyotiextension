@@ -1,0 +1,34 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vp build",
+        "build:extension": "vite build --config vite.extension.config.js",
+        "package:extension": "node scripts/package-extension.js",
+        "dev": "vp dev"
+    },
+    "dependencies": {
+        "@laravel/passkeys": "^0.2.0",
+        "@tailwindcss/vite": "^4.1.11",
+        "concurrently": "^10.0.3",
+        "laravel-vite-plugin": "^3.1",
+        "tailwindcss": "^4.0.7",
+        "vite": "^6.2.0",
+        "vite-plus": "0.3.0"
+    },
+    "optionalDependencies": {
+        "@laravel/multiplex": "^0.4.1",
+        "@rollup/rollup-linux-x64-gnu": "4.9.5",
+        "@tailwindcss/oxide-linux-x64-gnu": "^4.0.1",
+        "lightningcss-linux-x64-gnu": "^1.29.1"
+    },
+    "devDependencies": {
+        "@types/chrome": "^0.2.9",
+        "@types/react": "^19.3.0",
+        "@types/react-dom": "^19.3.0",
+        "@vitejs/plugin-react": "^4.3.4",
+        "react": "^19.3.0",
+        "react-dom": "^19.3.0"
+    }
+}

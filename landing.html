@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compare Anything — Stop switching between tabs. Compare them.</title>
+  <meta name="description" content="Add 2–4 web pages and get one clear AI comparison table based only on the information on those pages." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-glow: rgba(37, 99, 235, 0.25);
+      --bg: #0b0f19;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --surface-hover: rgba(255, 255, 255, 0.07);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-green: #10b981;
+      --accent-cyan: #06b6d4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 50% -20%, rgba(37, 99, 235, 0.18) 0%, transparent 60%),
+        radial-gradient(circle at 90% 40%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Navigation */
+    header {
+      padding: 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--surface-border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .logo-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+    }
+
+    .brand-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-cta {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .nav-cta:hover {
+      background: var(--surface-hover);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+
+    .pill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #60a5fa;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 40%, #93c5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 19px;
+      color: var(--text-muted);
+      max-width: 620px;
+      margin: 0 auto 36px;
+    }
+
+    .btn-chrome {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #2563eb;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 16px 36px;
+      border-radius: 12px;
+      text-decoration: none;
+      box-shadow: 0 4px 30px var(--primary-glow);
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-chrome:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 40px rgba(37, 99, 235, 0.4);
+    }
+
+    .hero-note {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 14px;
+    }
+
+    /* Diagram Section (Section 43) */
+    .flow-diagram-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 20px;
+      padding: 40px;
+      margin: 40px auto 70px;
+      max-width: 860px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    .flow-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .tabs-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tab-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tab-icon {
+      color: #38bdf8;
+    }
+
+    .flow-connector {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .flow-engine-badge {
+      background: linear-gradient(135deg, #1e40af, #2563eb);
+      border: 1px solid rgba(147, 197, 253, 0.3);
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      color: #fff;
+      box-shadow: 0 0 25px rgba(37, 99, 235, 0.4);
+      text-align: center;
+    }
+
+    .arrow-icon {
+      font-size: 20px;
+      color: #60a5fa;
+    }
+
+    .decision-column {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 24px;
+      border-radius: 14px;
+      text-align: left;
+    }
+
+    .decision-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-green);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .decision-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: #ecfdf5;
+      margin-bottom: 6px;
+    }
+
+    .decision-desc {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+
+    /* Steps Section */
+    .steps-section {
+      padding: 40px 0 80px;
+      text-align: center;
+    }
+
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 16px;
+      margin-bottom: 48px;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      text-align: left;
+    }
+
+    .step-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      padding: 30px;
+      border-radius: 16px;
+      position: relative;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .step-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(37, 99, 235, 0.4);
+    }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      color: #60a5fa;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .step-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .step-desc {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* Comparison Mockup Preview */
+    .preview-section {
+      padding: 20px 0 100px;
+    }
+
+    .preview-card {
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 18px;
+      padding: 36px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+    }
+
+    .preview-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .preview-tag {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+
+    .verdict-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 24px;
+    }
+
+    .verdict-box h4 {
+      color: #166534;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .verdict-box p {
+      font-size: 13px;
+      color: #334155;
+      line-height: 1.5;
+    }
+
+    .mockup-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .mockup-table th, .mockup-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .mockup-table th {
+      background: #f8fafc;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    .mockup-table tr:hover td {
+      background: #f8fafc;
+    }
+
+    .winner-pill {
+      background: #dcfce7;
+      color: #166534;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 6px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--surface-border);
+      padding: 40px 0;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: #60a5fa;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 38px; }
+      .flow-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <a href="#" class="brand">
+        <div class="logo-badge">CA</div>
+        <span class="brand-text">Compare Anything</span>
+      </a>
+      <a href="#install" class="nav-cta">Add to Chrome</a>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="pill-tag">
+        <span>⚡</span> AI-Powered Web Comparison Extension
+      </div>
+      <h1>
+        Stop switching between tabs.<br>
+        <span class="gradient-text">Compare them.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Compare products, plans, jobs, courses, and more across different websites with one clean, evidence-based AI decision.
+      </p>
+      <button class="btn-chrome" id="install" onclick="alert('Compare Anything is ready! Load unpacked from your dist/ folder in chrome://extensions.')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        Add to Chrome — It's Free
+      </button>
+      <p class="hero-note">No account required • No credit card • Works on all websites</p>
+    </section>
+
+    <!-- Visual Diagram (Section 43) -->
+    <div class="flow-diagram-card">
+      <div class="flow-grid">
+        <div class="tabs-column">
+          <div class="tab-pill"><span class="tab-icon">📑</span> Tab 1: Retailer A (Laptop)</div>
+          <div class="tab-pill"><span class="tab-icon">📑</span> Tab 2: Retailer B (Laptop)</div>
+          <div class="tab-pill"><span class="tab-icon">📑</span> Tab 3: Retailer C (Laptop)</div>
+        </div>
+
+        <div class="flow-connector">
+          <div class="arrow-icon">➔</div>
+          <div class="flow-engine-badge">COMPARE ANYTHING</div>
+          <div class="arrow-icon">➔</div>
+        </div>
+
+        <div class="decision-column">
+          <div class="decision-label">Result</div>
+          <div class="decision-title">One Clear Decision</div>
+          <p class="decision-desc">Objective matrix table, key tradeoffs, personalized recommendation, and missing facts highlighted.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <section class="steps-section">
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-subtitle">Three simple steps to eliminate tab chaos.</p>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h3 class="step-title">Add a Page</h3>
+          <p class="step-desc">Open any product, job description, course, or service page and click <strong>+ Add to Comparison</strong> in the extension popup.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h3 class="step-title">Add Another</h3>
+          <p class="step-desc">Switch to 1–3 alternative options on other websites and add them to your comparison workspace.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h3 class="step-title">Compare</h3>
+          <p class="step-desc">Optionally tell the AI what matters to you, click <strong>Compare</strong>, and immediately receive a structured decision report.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actual Comparison Preview Section -->
+    <section class="preview-section">
+      <div class="preview-card">
+        <div class="preview-header">
+          <div>
+            <h3 class="preview-title">ASUS Vivobook 15 vs Lenovo IdeaPad 5</h3>
+            <p style="font-size: 13px; color: #64748b; margin-top: 4px;">Goal: Best for programming under Tk 80,000</p>
+          </div>
+          <div class="preview-tag">Verified Evidence</div>
+        </div>
+
+        <div class="verdict-box">
+          <h4>🏆 Quick Verdict: Lenovo IdeaPad 5</h4>
+          <p>Lenovo IdeaPad 5 provides the strongest combination of multi-core CPU performance and 16GB RAM while remaining within your stated budget.</p>
+        </div>
+
+        <table class="mockup-table">
+          <thead>
+            <tr>
+              <th>Criterion</th>
+              <th>ASUS Vivobook 15</th>
+              <th>Lenovo IdeaPad 5</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Price</strong></td>
+              <td>Tk 74,500 <span class="winner-pill">Lowest</span></td>
+              <td>Tk 78,000</td>
+            </tr>
+            <tr>
+              <td><strong>Processor</strong></td>
+              <td>Core i5-1335U</td>
+              <td>Ryzen 7 7730U <span class="winner-pill">Best</span></td>
+            </tr>
+            <tr>
+              <td><strong>Memory (RAM)</strong></td>
+              <td>8 GB</td>
+              <td>16 GB <span class="winner-pill">Best</span></td>
+            </tr>
+            <tr>
+              <td><strong>Weight</strong></td>
+              <td style="color: #94a3b8; font-style: italic;">Not stated</td>
+              <td>1.63 kg</td>
+            </tr>
+            <tr>
+              <td><strong>Warranty</strong></td>
+              <td>2 years</td>
+              <td>2 years</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 2026 Compare Anything. Built with privacy in mind. Never stores your browsing history.</p>
+      <p style="margin-top: 8px;">
+        <a href="docs/PRIVACY.md">Privacy Policy</a> • 
+        <a href="docs/STORE-SUBMISSION.md">Store Submission Guide</a>
+      </p>
+    </footer>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+# Environment and Secrets (CRITICAL: NEVER COMMIT)
+.env
+.env.*
+!.env.example
+*.key
+auth.json
+
+# Dependencies
+/node_modules
+/vendor
+
+# .NET Build Artifacts
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Laravel caches & temp
+/.phpunit.cache
+/public/build
+/public/fonts-manifest.dev.json
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+.phpactor.json
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+*.sqlite
+*.sqlite-journal
+
+
+# IDEs & System
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+.DS_Store
+Thumbs.db
