@@ -10,7 +10,12 @@ LoadDotEnv();
 
 var builder = WebApplication.CreateBuilder(args);
 
-if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ASPNETCORE_URLS")))
+var renderPort = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(renderPort))
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{renderPort}");
+}
+else if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ASPNETCORE_URLS")))
 {
     builder.WebHost.UseUrls("http://localhost:5100");
 }
@@ -120,6 +125,9 @@ app.UseMiddleware<PrivacyLoggingMiddleware>();
 app.UseRateLimiter();
 
 app.MapControllers();
+
+app.MapGet("/", () => Results.Ok(new { status = "running", service = "Compare Anything API" }));
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", service = "Compare Anything API" }));
 
 app.Run();
 

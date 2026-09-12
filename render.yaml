@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: compare-anything-api
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: GROQ_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: AISettings__Groq__Model
+        value: llama-3.3-70b-versatile
